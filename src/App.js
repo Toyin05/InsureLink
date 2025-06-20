@@ -6,8 +6,7 @@ import LandingPage from './components/LandingPage';
 import Login from './components/Login';
 import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword';
-// Dashboard will be added in the next step
-// import Dashboard from './components/Dashboard';
+import Dashboard from './components/Dashboard';
 
 function App() {
   return (
@@ -22,8 +21,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
-          {/* Protected Routes - Add these as we build them */}
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={<Dashboard />} />
           {/* <Route path="/education" element={<EducationCenter />} /> */}
           {/* <Route path="/chat" element={<AIChatInterface />} /> */}
           {/* <Route path="/plans" element={<InsurancePlans />} /> */}
