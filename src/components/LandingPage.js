@@ -163,7 +163,7 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2024 InsureLink. All rights reserved. Built with ❤️ for Nigeria.</p>
+            <p>&copy; 2024 InsureLink. All rights reserved.</p>
           </div>
         </div>
       </footer>
