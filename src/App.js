@@ -24,13 +24,11 @@ function App() {
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
-          {/* <Route path="/education" element={<EducationCenter />} /> */}
-          {/* <Route path="/chat" element={<AIChatInterface />} /> */}
-          {/* <Route path="/plans" element={<InsurancePlans />} /> */}
+          <Route path="/education" element={<EducationCenter />} /> */}
+          {/*Route path="/chat" element={<AIChatInterface />} /> */}
+          <Route path="/plans" element={<InsurancePlans />} 
           {/* <Route path="/profile" element={<Profile />} /> */}
 
-
-           <Route path="/education" element={<Education />} />
 
           {/* Catch all route - redirect to landing */}
           <Route path="*" element={<LandingPage />} />
