@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { loginUser, saveToken } from '../services/apiService'; // Import the login function
 import '../styles/Login.css';
 
 const Login = () => {
@@ -9,6 +10,7 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(''); // To show error messages
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -17,18 +19,35 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Simulate API call delay
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      console.log('Trying to login with:', formData.email); // For debugging
+      
+      // Call the backend login function
+      const response = await loginUser(formData.email, formData.password);
+      
+      console.log('Login successful:', response); // For debugging
+      
+      // Save the token to browser storage
+      saveToken(response.access_token);
+      
       // Navigate to dashboard after successful login
       navigate('/dashboard');
-    }, 1500);
+      
+    } catch (error) {
+      console.error('Login failed:', error); // For debugging
+      setError(error.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,6 +64,20 @@ const Login = () => {
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
+            {/* Show error message if login fails */}
+            {error && (
+              <div style={{
+                backgroundColor: '#fee',
+                color: '#c33',
+                padding: '10px',
+                borderRadius: '5px',
+                marginBottom: '15px',
+                border: '1px solid #fcc'
+              }}>
+                {error}
+              </div>
+            )}
+
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
               <input
