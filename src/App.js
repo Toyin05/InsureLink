@@ -28,7 +28,10 @@ function App() {
           {/* <Route path="/chat" element={<AIChatInterface />} /> */}
           {/* <Route path="/plans" element={<InsurancePlans />} /> */}
           {/* <Route path="/profile" element={<Profile />} /> */}
-          
+
+
+           <Route path="/education" element={<Education />} />
+
           {/* Catch all route - redirect to landing */}
           <Route path="*" element={<LandingPage />} />
         </Routes>
