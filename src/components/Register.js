@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { registerUser, saveToken } from '../services/apiService';
 import '../styles/Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    username: '',
     email: '',
     phone: '',
+    age: '',
+    budget: '',
+    gender: '',
+    nin: '',
     password: '',
     confirmPassword: ''
   });
@@ -15,6 +21,8 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -23,29 +31,74 @@ const Register = () => {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
+    if (success) setSuccess('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
     
+    // Frontend validation
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      setError('Passwords do not match!');
       return;
     }
 
     if (!termsAccepted) {
-      alert('Please accept the terms and conditions');
+      setError('Please accept the terms and conditions');
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
       return;
     }
 
     setIsLoading(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
+    try {
+      console.log('Registering user with data:', formData); // For debugging
+      
+      // Prepare data in the format the backend expects
+      const registrationData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        age: parseInt(formData.age) || 0,
+        budget: parseFloat(formData.budget) || 0,
+        gender: formData.gender,
+        nin: parseInt(formData.nin) || 0,
+        phone: formData.phone
+      };
+
+      // Call the backend registration function
+      const response = await registerUser(registrationData);
+      
+      console.log('Registration successful:', response); // For debugging
+      
+      setSuccess('Account created successfully! You can now login.');
+      
+      // Optional: Auto-login after registration
+      // If the backend returns a token, save it and redirect
+      if (response.access_token) {
+        saveToken(response.access_token);
+        setTimeout(() => navigate('/dashboard'), 2000);
+      } else {
+        // Otherwise, redirect to login page after showing success message
+        setTimeout(() => navigate('/login'), 2000);
+      }
+      
+    } catch (error) {
+      console.error('Registration failed:', error); // For debugging
+      setError(error.message || 'Registration failed. Please try again.');
+    } finally {
       setIsLoading(false);
-      // Navigate to dashboard after successful registration
-      navigate('/dashboard');
-    }, 2000);
+    }
   };
 
   return (
@@ -62,9 +115,37 @@ const Register = () => {
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
+            {/* Show error message if registration fails */}
+            {error && (
+              <div style={{
+                backgroundColor: '#fee',
+                color: '#c33',
+                padding: '10px',
+                borderRadius: '5px',
+                marginBottom: '15px',
+                border: '1px solid #fcc'
+              }}>
+                {error}
+              </div>
+            )}
+
+            {/* Show success message if registration succeeds */}
+            {success && (
+              <div style={{
+                backgroundColor: '#efe',
+                color: '#363',
+                padding: '10px',
+                borderRadius: '5px',
+                marginBottom: '15px',
+                border: '1px solid #cfc'
+              }}>
+                {success}
+              </div>
+            )}
+
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="firstName">First Name</label>
+                <label htmlFor="firstName">First Name *</label>
                 <input
                   type="text"
                   id="firstName"
@@ -76,7 +157,7 @@ const Register = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="lastName">Last Name</label>
+                <label htmlFor="lastName">Last Name *</label>
                 <input
                   type="text"
                   id="lastName"
@@ -90,7 +171,20 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="username">Username *</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                placeholder="Choose a unique username"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="email">Email Address *</label>
               <input
                 type="email"
                 id="email"
@@ -103,7 +197,7 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
+              <label htmlFor="phone">Phone Number *</label>
               <input
                 type="tel"
                 id="phone"
@@ -117,7 +211,66 @@ const Register = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="age">Age *</label>
+                <input
+                  type="number"
+                  id="age"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleInputChange}
+                  placeholder="Enter your age"
+                  min="18"
+                  max="100"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="gender">Gender *</label>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="budget">Monthly Budget (₦)</label>
+                <input
+                  type="number"
+                  id="budget"
+                  name="budget"
+                  value={formData.budget}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 50000"
+                  min="0"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="nin">NIN (National Identification Number)</label>
+                <input
+                  type="text"
+                  id="nin"
+                  name="nin"
+                  value={formData.nin}
+                  onChange={handleInputChange}
+                  placeholder="Enter your NIN"
+                  maxLength="11"
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="password">Password *</label>
                 <div className="password-input-wrapper">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -138,7 +291,7 @@ const Register = () => {
                 </div>
               </div>
               <div className="form-group">
-                <label htmlFor="confirmPassword">Confirm Password</label>
+                <label htmlFor="confirmPassword">Confirm Password *</label>
                 <div className="password-input-wrapper">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
