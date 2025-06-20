@@ -396,4 +396,6 @@ body {
   content: '';
   flex: 1;
   height: 1px;
-  background:
+  background: var(--border-color);
+  margin: 0 10px;
+}
