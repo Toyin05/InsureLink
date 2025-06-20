@@ -1,254 +1,138 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './LandingPage.css';
 
 const LandingPage = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
-  useEffect(() => {
-    setIsVisible(true);
-    
-    // Auto-rotate testimonials
-    const interval = setInterval(() => {
-      setCurrentTestimonial(prev => (prev + 1) % 3);
-    }, 4000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  const testimonials = [
-    {
-      name: "Adebayo Ogundimu",
-      role: "Small Business Owner",
-      text: "InsureLink helped me understand health insurance in simple terms. Now my family is protected!",
-      avatar: "👨🏿‍💼"
-    },
-    {
-      name: "Fatima Abdullahi",
-      role: "Teacher",
-      text: "I never knew insurance could be this simple. The AI explained everything in Hausa!",
-      avatar: "👩🏿‍🏫"
-    },
-    {
-      name: "Chinedu Okoro",
-      role: "Engineer",
-      text: "Finally found the perfect insurance plan for my family. The comparison tool is amazing!",
-      avatar: "👨🏿‍💻"
-    }
-  ];
-
-  const features = [
-    {
-      icon: "🤖",
-      title: "AI-Powered Assistant",
-      description: "Get personalized insurance advice in your local language - Pidgin, Hausa, Yoruba, or Igbo"
-    },
-    {
-      icon: "📊",
-      title: "Smart Comparison",
-      description: "Compare plans from top Nigerian insurers like Leadway, ARM, and more in one place"
-    },
-    {
-      icon: "🎓",
-      title: "Education Center",
-      description: "Learn insurance basics through videos, articles, and interactive content"
-    },
-    {
-      icon: "💳",
-      title: "Secure Payments",
-      description: "Pay premiums safely with Paystack and Flutterwave integration"
-    }
-  ];
-
   return (
     <div className="landing-page">
-      {/* Navigation */}
-      <nav className="navbar">
+      {/* Navigation Header */}
+      <header className="navbar">
         <div className="nav-container">
-          <div className="nav-logo">
-            <span className="logo-icon">🛡️</span>
-            <span className="logo-text">InsureLink</span>
+          <div className="logo">
+            <h2>🛡️ InsureLink</h2>
           </div>
-          <div className="nav-links">
-            <a href="#features">Features</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#education">Education</a>
-            <button className="nav-login-btn">Login</button>
-            <button className="nav-signup-btn">Get Started</button>
-          </div>
+          <nav className="nav-links">
+            <Link to="/education" className="nav-link">Education</Link>
+            <Link to="/plans" className="nav-link">Insurance Plans</Link>
+            <Link to="/login" className="nav-link">Login</Link>
+            <Link to="/register" className="btn-primary">Get Started</Link>
+          </nav>
         </div>
-      </nav>
+      </header>
 
       {/* Hero Section */}
-      <section className={`hero ${isVisible ? 'fade-in' : ''}`}>
+      <section className="hero">
         <div className="hero-container">
           <div className="hero-content">
-            <div className="hero-badge">
-              🚀 AI-Powered Insurance Made Simple
-            </div>
             <h1 className="hero-title">
-              Your Personal
-              <span className="gradient-text"> Insurance Guide</span>
-              <br />for Nigeria
+              Smart Insurance Made Simple for Nigerians 🇳🇬
             </h1>
-            <p className="hero-description">
-              Understand, compare, and choose the best insurance plans with our AI assistant. 
-              Get expert advice in your local language and protect what matters most.
+            <p className="hero-subtitle">
+              Navigate Nigeria's insurance landscape with confidence. Get personalized recommendations, 
+              expert education, and find the perfect coverage for your needs.
             </p>
             <div className="hero-buttons">
-              <button className="cta-primary">
-                Start Your Journey
-                <span className="button-arrow">→</span>
-              </button>
-              <button className="cta-secondary">
-                <span className="play-icon">▶</span>
-                Watch Demo
-              </button>
-            </div>
-            <div className="hero-stats">
-              <div className="stat">
-                <span className="stat-number">10,000+</span>
-                <span className="stat-label">Nigerians Protected</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">50+</span>
-                <span className="stat-label">Insurance Plans</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">4</span>
-                <span className="stat-label">Local Languages</span>
-              </div>
+              <Link to="/register" className="btn-hero-primary">
+                Start Your Journey 🚀
+              </Link>
+              <Link to="/education" className="btn-hero-secondary">
+                Learn About Insurance 📚
+              </Link>
             </div>
           </div>
-          <div className="hero-visual">
-            <div className="floating-card card-1">
-              <div className="card-icon">💬</div>
-              <div className="card-content">
-                <div className="card-title">AI Assistant</div>
-                <div className="card-text">"Wetin be insurance?"</div>
+          <div className="hero-image">
+            <div className="hero-graphic">
+              <div className="insurance-icons">
+                <div className="icon">🏥</div>
+                <div className="icon">🚗</div>
+                <div className="icon">🏠</div>
+                <div className="icon">✈️</div>
               </div>
             </div>
-            <div className="floating-card card-2">
-              <div className="card-icon">📋</div>
-              <div className="card-content">
-                <div className="card-title">Perfect Match</div>
-                <div className="card-text">Health Plan - ₦50,000/year</div>
-              </div>
-            </div>
-            <div className="floating-card card-3">
-              <div className="card-icon">🏥</div>
-              <div className="card-content">
-                <div className="card-title">Coverage</div>
-                <div className="card-text">24/7 Medical Support</div>
-              </div>
-            </div>
-            <div className="hero-circle"></div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="features">
+      {/* Value Proposition */}
+      <section className="value-prop">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">Why Choose InsureLink?</h2>
-            <p className="section-subtitle">
-              We're revolutionizing insurance accessibility across Nigeria with cutting-edge AI technology
-            </p>
-          </div>
-          <div className="features-grid">
-            {features.map((feature, index) => (
-              <div key={index} className="feature-card">
-                <div className="feature-icon">{feature.icon}</div>
-                <h3 className="feature-title">{feature.title}</h3>
-                <p className="feature-description">{feature.description}</p>
-              </div>
-            ))}
+          <h2 className="section-title">Why InsureLink? 🤔</h2>
+          <div className="value-grid">
+            <div className="value-card">
+              <div className="value-icon">🤖</div>
+              <h3>AI-Powered Guidance</h3>
+              <p>Get personalized insurance recommendations based on your unique needs and budget.</p>
+            </div>
+            <div className="value-card">
+              <div className="value-icon">🎓</div>
+              <h3>Expert Education</h3>
+              <p>Learn insurance basics through our comprehensive educational resources and videos.</p>
+            </div>
+            <div className="value-card">
+              <div className="value-icon">💰</div>
+              <h3>Best Deals</h3>
+              <p>Compare plans from top Nigerian insurers and find the most affordable options.</p>
+            </div>
+            <div className="value-card">
+              <div className="value-icon">🔒</div>
+              <h3>Trusted & Secure</h3>
+              <p>Your data is safe with us. We partner only with licensed insurance providers.</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="how-it-works">
+      <section className="how-it-works">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">How It Works</h2>
-            <p className="section-subtitle">Get insured in 3 simple steps</p>
-          </div>
+          <h2 className="section-title">How It Works ⚡</h2>
           <div className="steps">
             <div className="step">
               <div className="step-number">1</div>
               <div className="step-content">
-                <h3>Chat with Our AI</h3>
-                <p>Tell our AI assistant about yourself in your preferred language</p>
+                <h3>Tell Us About Yourself</h3>
+                <p>Share your basic information, lifestyle, and insurance needs.</p>
               </div>
             </div>
-            <div className="step-connector"></div>
             <div className="step">
               <div className="step-number">2</div>
               <div className="step-content">
-                <h3>Get Recommendations</h3>
-                <p>Receive personalized insurance plan suggestions based on your needs</p>
+                <h3>Get AI Recommendations</h3>
+                <p>Our AI analyzes your profile and suggests the best insurance options.</p>
               </div>
             </div>
-            <div className="step-connector"></div>
             <div className="step">
               <div className="step-number">3</div>
               <div className="step-content">
-                <h3>Choose & Pay</h3>
-                <p>Select your ideal plan and pay securely through our platform</p>
+                <h3>Compare & Choose</h3>
+                <p>Review detailed plan comparisons and select what works for you.</p>
+              </div>
+            </div>
+            <div className="step">
+              <div className="step-number">4</div>
+              <div className="step-content">
+                <h3>Get Covered</h3>
+                <p>Complete your application and enjoy peace of mind with proper coverage.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="testimonials">
-        <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">Trusted by Thousands</h2>
-            <p className="section-subtitle">See what our users say about InsureLink</p>
-          </div>
-          <div className="testimonial-slider">
-            <div className="testimonial-card active">
-              <div className="testimonial-content">
-                <div className="testimonial-avatar">
-                  {testimonials[currentTestimonial].avatar}
-                </div>
-                <blockquote className="testimonial-text">
-                  "{testimonials[currentTestimonial].text}"
-                </blockquote>
-                <div className="testimonial-author">
-                  <div className="author-name">{testimonials[currentTestimonial].name}</div>
-                  <div className="author-role">{testimonials[currentTestimonial].role}</div>
-                </div>
-              </div>
-            </div>
-            <div className="testimonial-dots">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  className={`dot ${index === currentTestimonial ? 'active' : ''}`}
-                  onClick={() => setCurrentTestimonial(index)}
-                ></button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="cta-section">
+      {/* Call to Action */}
+      <section className="cta">
         <div className="container">
           <div className="cta-content">
-            <h2 className="cta-title">Ready to Protect Your Future?</h2>
-            <p className="cta-description">
-              Join thousands of Nigerians who have found their perfect insurance match with InsureLink
-            </p>
-            <button className="cta-button">
-              Get Started Today
-              <span className="button-sparkle">✨</span>
-            </button>
+            <h2>Ready to Get Started? 🎯</h2>
+            <p>Join thousands of Nigerians who trust InsureLink for their insurance needs.</p>
+            <div className="cta-buttons">
+              <Link to="/register" className="btn-cta-primary">
+                Create Free Account 🆓
+              </Link>
+              <Link to="/chat" className="btn-cta-secondary">
+                Chat with AI Assistant 💬
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -258,51 +142,28 @@ const LandingPage = () => {
         <div className="container">
           <div className="footer-content">
             <div className="footer-section">
-              <div className="footer-logo">
-                <span className="logo-icon">🛡️</span>
-                <span className="logo-text">InsureLink</span>
-              </div>
-              <p className="footer-description">
-                Making insurance accessible and understandable for every Nigerian.
-              </p>
-              <div className="social-links">
-                <a href="#" className="social-link">📘</a>
-                <a href="#" className="social-link">🐦</a>
-                <a href="#" className="social-link">📷</a>
-                <a href="#" className="social-link">💼</a>
-              </div>
+              <h3>🛡️ InsureLink</h3>
+              <p>Making insurance accessible and understandable for all Nigerians.</p>
             </div>
             <div className="footer-section">
-              <h4 className="footer-title">Product</h4>
-              <ul className="footer-links">
-                <li><a href="#">Features</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">Insurance Plans</a></li>
-                <li><a href="#">Education Center</a></li>
+              <h4>Quick Links</h4>
+              <ul>
+                <li><Link to="/education">Education Center</Link></li>
+                <li><Link to="/plans">Insurance Plans</Link></li>
+                <li><Link to="/chat">AI Assistant</Link></li>
               </ul>
             </div>
             <div className="footer-section">
-              <h4 className="footer-title">Support</h4>
-              <ul className="footer-links">
-                <li><a href="#">Help Center</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-              </ul>
-            </div>
-            <div className="footer-section">
-              <h4 className="footer-title">Languages</h4>
-              <ul className="footer-links">
-                <li><a href="#">English</a></li>
-                <li><a href="#">Pidgin</a></li>
-                <li><a href="#">Hausa</a></li>
-                <li><a href="#">Yoruba</a></li>
-                <li><a href="#">Igbo</a></li>
+              <h4>Support</h4>
+              <ul>
+                <li><a href="mailto:support@insurelink.ng">Contact Us</a></li>
+                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><a href="#terms">Terms of Service</a></li>
               </ul>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2025 InsureLink. All rights reserved. Built with 💚 for Nigeria.</p>
+            <p>&copy; 2024 InsureLink. All rights reserved. Built with ❤️ for Nigeria.</p>
           </div>
         </div>
       </footer>
