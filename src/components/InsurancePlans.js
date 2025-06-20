@@ -1,351 +1,228 @@
-import React, { useState, useEffect } from 'react';
-import './InsurancePlansPage.css';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/InsurancePlans.css';
 
-const InsurancePlansPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [aiRecommendations, setAiRecommendations] = useState([]);
+const InsurancePlans = () => {
+  const navigate = useNavigate();
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Sample insurance plans data
-  const insurancePlans = [
+  // Mock data based on your API format
+  const mockPlans = [
     {
       id: 1,
-      title: "BasicCare Health",
+      title: "Essential Health Cover",
       insurer: "Leadway Assurance",
-      product_type: "health",
-      premium: "₦15,000/year",
+      product_type: "Health",
+      price: "₦45,000/year",
       coverage: "₦2,000,000",
-      pros: [
-        "Affordable monthly payments",
-        "Covers basic medical needs",
-        "Quick claim processing",
-        "Wide hospital network"
-      ],
-      cons: [
-        "Limited specialist coverage",
-        "Basic dental coverage only"
-      ],
-      features: ["Inpatient Care", "Outpatient Care", "Emergency Services", "Pharmacy Benefits"],
-      popular: false
-    },
-    {
-      id: 2,
-      title: "ComprehensiveCare Plus",
-      insurer: "ARM Pension Managers",
-      product_type: "health",
-      premium: "₦35,000/year",
-      coverage: "₦5,000,000",
-      pros: [
-        "Comprehensive coverage",
-        "Includes dental and optical",
-        "Maternity benefits included",
-        "International emergency coverage"
-      ],
-      cons: [
-        "Higher premium",
-        "Waiting period for pre-existing conditions"
-      ],
-      features: ["Full Medical Coverage", "Dental & Optical", "Maternity Care", "Mental Health", "International Emergency"],
+      pros: ["Affordable premiums", "Covers maternity care", "Includes telemedicine", "24/7 customer support"],
+      cons: ["Limited dental coverage", "No international coverage"],
+      rating: 4.2,
       popular: true
     },
     {
-      id: 3,
-      title: "AutoProtect Standard",
+      id: 2,
+      title: "Comprehensive Auto Protection",
       insurer: "AIICO Insurance",
-      product_type: "auto",
-      premium: "₦25,000/year",
-      coverage: "₦3,000,000",
-      pros: [
-        "Third-party liability covered",
-        "Fire and theft protection",
-        "Nationwide coverage",
-        "Easy renewal process"
-      ],
-      cons: [
-        "Own damage not fully covered",
-        "Limited to specific repair shops"
-      ],
-      features: ["Third Party Liability", "Fire & Theft", "Towing Services", "Legal Support"],
+      product_type: "Auto",
+      price: "₦120,000/year",
+      coverage: "₦5,000,000",
+      pros: ["Full comprehensive coverage", "Third-party liability", "Fire and theft protection", "Emergency roadside assistance"],
+      cons: ["Higher premium cost", "Age restrictions apply"],
+      rating: 4.5,
       popular: false
     },
     {
+      id: 3,
+      title: "Premium Health Plus",
+      insurer: "AXA Mansard",
+      product_type: "Health",
+      price: "₦85,000/year",
+      coverage: "₦5,000,000",
+      pros: ["International coverage", "Dental and optical included", "No waiting period", "Premium hospitals network"],
+      cons: ["Higher cost", "Strict eligibility criteria"],
+      rating: 4.7,
+      popular: true
+    },
+    {
       id: 4,
-      title: "HomeShield Family",
-      insurer: "Mutual Benefits Assurance",
-      product_type: "home",
-      premium: "₦20,000/year",
-      coverage: "₦10,000,000",
-      pros: [
-        "Covers building and contents",
-        "Natural disaster protection",
-        "Temporary accommodation",
-        "Personal liability coverage"
-      ],
-      cons: [
-        "Excludes high-risk areas",
-        "Requires home inspection"
-      ],
-      features: ["Building Cover", "Contents Insurance", "Natural Disasters", "Liability Protection"],
+      title: "Basic Motor Insurance",
+      insurer: "Cornerstone Insurance",
+      product_type: "Auto",
+      price: "₦65,000/year",
+      coverage: "₦3,000,000",
+      pros: ["Affordable rates", "Quick claim processing", "Third-party coverage", "Flexible payment options"],
+      cons: ["Limited coverage scope", "No comprehensive benefits"],
+      rating: 3.8,
       popular: false
     },
     {
       id: 5,
-      title: "LifeGuard Essential",
-      insurer: "Cornerstone Insurance",
-      product_type: "life",
-      premium: "₦12,000/year",
-      coverage: "₦1,000,000",
-      pros: [
-        "Affordable life coverage",
-        "No medical exam required",
-        "Flexible payment options",
-        "Family protection"
-      ],
-      cons: [
-        "Lower coverage amount",
-        "Age restrictions apply"
-      ],
-      features: ["Death Benefit", "Disability Cover", "Family Protection", "Flexible Payments"],
+      title: "Family Life Assurance",
+      insurer: "Mutual Benefits Assurance",
+      product_type: "Life",
+      price: "₦95,000/year",
+      coverage: "₦10,000,000",
+      pros: ["Family coverage", "Investment component", "Flexible premiums", "Tax benefits"],
+      cons: ["Long commitment period", "Complex terms"],
+      rating: 4.1,
+      popular: false
+    },
+    {
+      id: 6,
+      title: "Home Protection Plan",
+      insurer: "Niger Insurance",
+      product_type: "Home",
+      price: "₦55,000/year",
+      coverage: "₦15,000,000",
+      pros: ["Property damage coverage", "Contents insurance", "Natural disaster protection", "Liability coverage"],
+      cons: ["Geographical restrictions", "High deductibles"],
+      rating: 4.0,
       popular: false
     }
   ];
 
-  const categories = [
-    { id: 'all', name: 'All Plans', icon: '🏠' },
-    { id: 'health', name: 'Health', icon: '🏥' },
-    { id: 'auto', name: 'Auto', icon: '🚗' },
-    { id: 'home', name: 'Home', icon: '🏡' },
-    { id: 'life', name: 'Life', icon: '👨‍👩‍👧‍👦' }
-  ];
+  const filterTypes = ['all', 'Health', 'Auto', 'Life', 'Home'];
 
-  const filteredPlans = selectedCategory === 'all' 
-    ? insurancePlans 
-    : insurancePlans.filter(plan => plan.product_type === selectedCategory);
+  const filteredPlans = mockPlans.filter(plan => {
+    const matchesFilter = selectedFilter === 'all' || plan.product_type === selectedFilter;
+    const matchesSearch = plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         plan.insurer.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
-  const handleGetAIRecommendations = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const recommendations = insurancePlans.slice(0, 3).map(plan => ({
-        title: plan.title,
-        insurer: plan.insurer,
-        product_type: plan.product_type,
-        pros: plan.pros,
-        cons: plan.cons
-      }));
-      setAiRecommendations(recommendations);
-      setIsLoading(false);
-    }, 2000);
+  const handleGetQuote = (planId) => {
+    // In real implementation, this would navigate to quote page or open modal
+    alert(`Getting quote for plan ID: ${planId}. This will connect to backend later.`);
+  };
+
+  const handleCompare = (planId) => {
+    // In real implementation, this would add to comparison list
+    alert(`Added plan ${planId} to comparison. Feature coming soon!`);
   };
 
   return (
-    <div className="insurance-plans-page">
+    <div className="insurance-plans">
       {/* Header Section */}
-      <div className="plans-header">
-        <div className="container">
-          <div className="header-content">
-            <h1>Find Your Perfect Insurance Plan</h1>
-            <p>Discover insurance plans tailored to your needs. Compare, learn, and choose with confidence.</p>
-            
-            <div className="ai-recommendation-section">
-              <button 
-                className="ai-recommend-btn"
-                onClick={handleGetAIRecommendations}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <div className="loading-spinner"></div>
-                    Getting AI Recommendations...
-                  </>
-                ) : (
-                  <>
-                    🤖 Get AI Recommendations
-                  </>
-                )}
-              </button>
-              <span className="ai-help-text">Let our AI suggest the best plans for you</span>
-            </div>
-          </div>
+      <header className="plans-header">
+        <div className="header-content">
+          <button className="back-btn" onClick={() => navigate('/dashboard')}>
+            ← Back to Dashboard
+          </button>
+          <h1>🛡️ Insurance Plans</h1>
+          <p>Compare and choose the perfect insurance plan for your needs</p>
         </div>
-      </div>
+      </header>
 
-      {/* AI Recommendations */}
-      {aiRecommendations.length > 0 && (
-        <div className="ai-recommendations">
-          <div className="container">
-            <h2>🤖 AI Recommended for You</h2>
-            <div className="recommendations-grid">
-              {aiRecommendations.map((rec, index) => (
-                <div key={index} className="recommendation-card">
-                  <div className="rec-header">
-                    <h3>{rec.title}</h3>
-                    <span className="rec-insurer">{rec.insurer}</span>
-                    <span className="rec-type">{rec.product_type}</span>
-                  </div>
-                  <div className="rec-content">
-                    <div className="rec-pros">
-                      <h4>Why this works for you:</h4>
-                      <ul>
-                        {rec.pros.slice(0, 2).map((pro, i) => (
-                          <li key={i}>{pro}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* Search and Filter Section */}
+      <div className="search-filter-section">
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="🔍 Search plans or insurers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-      )}
-
-      {/* Category Filter */}
-      <div className="category-filter">
-        <div className="container">
-          <div className="filter-tabs">
-            {categories.map(category => (
-              <button
-                key={category.id}
-                className={`filter-tab ${selectedCategory === category.id ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category.id)}
-              >
-                <span className="tab-icon">{category.icon}</span>
-                {category.name}
-              </button>
-            ))}
-          </div>
+        
+        <div className="filter-tabs">
+          {filterTypes.map(type => (
+            <button
+              key={type}
+              className={`filter-tab ${selectedFilter === type ? 'active' : ''}`}
+              onClick={() => setSelectedFilter(type)}
+            >
+              {type === 'all' ? 'All Plans' : type}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Plans Grid */}
-      <div className="plans-content">
-        <div className="container">
-          <div className="plans-grid">
-            {filteredPlans.map(plan => (
-              <div key={plan.id} className={`plan-card ${plan.popular ? 'popular' : ''}`}>
-                {plan.popular && <div className="popular-badge">Most Popular</div>}
-                
-                <div className="plan-header">
-                  <h3>{plan.title}</h3>
-                  <p className="insurer">{plan.insurer}</p>
-                  <div className="plan-type">
-                    {categories.find(cat => cat.id === plan.product_type)?.icon} 
-                    {plan.product_type.charAt(0).toUpperCase() + plan.product_type.slice(1)} Insurance
-                  </div>
-                </div>
-
-                <div className="plan-pricing">
-                  <div className="premium">
-                    <span className="amount">{plan.premium}</span>
-                    <span className="coverage">Coverage up to {plan.coverage}</span>
-                  </div>
-                </div>
-
-                <div className="plan-features">
-                  <h4>Key Features</h4>
-                  <ul>
-                    {plan.features.map((feature, index) => (
-                      <li key={index}>✓ {feature}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="plan-actions">
-                  <button 
-                    className="btn-secondary"
-                    onClick={() => setSelectedPlan(plan)}
-                  >
-                    View Details
-                  </button>
-                  <button className="btn-primary">
-                    Get Started
-                  </button>
-                </div>
+      <div className="plans-container">
+        <div className="plans-grid">
+          {filteredPlans.map(plan => (
+            <div key={plan.id} className={`plan-card ${plan.popular ? 'popular' : ''}`}>
+              {plan.popular && <div className="popular-badge">⭐ Popular</div>}
+              
+              <div className="plan-header">
+                <h3>{plan.title}</h3>
+                <p className="insurer">{plan.insurer}</p>
+                <span className="plan-type">{plan.product_type}</span>
               </div>
-            ))}
-          </div>
+
+              <div className="plan-pricing">
+                <div className="price">{plan.price}</div>
+                <div className="coverage">Coverage up to {plan.coverage}</div>
+              </div>
+
+              <div className="plan-rating">
+                <span className="stars">⭐⭐⭐⭐⭐</span>
+                <span className="rating-number">{plan.rating}/5</span>
+              </div>
+
+              <div className="plan-features">
+                <h4>✅ Pros:</h4>
+                <ul className="pros-list">
+                  {plan.pros.map((pro, index) => (
+                    <li key={index}>{pro}</li>
+                  ))}
+                </ul>
+
+                <h4>⚠️ Cons:</h4>
+                <ul className="cons-list">
+                  {plan.cons.map((con, index) => (
+                    <li key={index}>{con}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="plan-actions">
+                <button 
+                  className="get-quote-btn"
+                  onClick={() => handleGetQuote(plan.id)}
+                >
+                  Get Quote
+                </button>
+                <button 
+                  className="compare-btn"
+                  onClick={() => handleCompare(plan.id)}
+                >
+                  Compare
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
+
+        {filteredPlans.length === 0 && (
+          <div className="no-results">
+            <h3>😔 No plans found</h3>
+            <p>Try adjusting your search or filter criteria</p>
+          </div>
+        )}
       </div>
 
-      {/* Plan Details Modal */}
-      {selectedPlan && (
-        <div className="modal-overlay" onClick={() => setSelectedPlan(null)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>{selectedPlan.title}</h2>
-              <button className="close-btn" onClick={() => setSelectedPlan(null)}>×</button>
-            </div>
-            
-            <div className="modal-body">
-              <div className="plan-details">
-                <div className="detail-section">
-                  <h3>Coverage Details</h3>
-                  <p><strong>Insurer:</strong> {selectedPlan.insurer}</p>
-                  <p><strong>Premium:</strong> {selectedPlan.premium}</p>
-                  <p><strong>Coverage:</strong> Up to {selectedPlan.coverage}</p>
-                </div>
+      {/* Call to Action Section */}
+      <div className="cta-section">
+        <h2>Need Help Choosing? 🤔</h2>
+        <p>Our AI assistant can help you find the perfect insurance plan based on your specific needs</p>
+        <button 
+          className="ai-help-btn"
+          onClick={() => navigate('/chat')}
+        >
+          💬 Ask Our AI Assistant
+        </button>
+      </div>
 
-                <div className="pros-cons">
-                  <div className="pros">
-                    <h4>✅ Advantages</h4>
-                    <ul>
-                      {selectedPlan.pros.map((pro, index) => (
-                        <li key={index}>{pro}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  <div className="cons">
-                    <h4>⚠️ Considerations</h4>
-                    <ul>
-                      {selectedPlan.cons.map((con, index) => (
-                        <li key={index}>{con}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="features-detail">
-                  <h4>Complete Feature List</h4>
-                  <div className="features-grid">
-                    {selectedPlan.features.map((feature, index) => (
-                      <div key={index} className="feature-item">
-                        ✓ {feature}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={() => setSelectedPlan(null)}>
-                Close
-              </button>
-              <button className="btn-primary">
-                Choose This Plan
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Bottom CTA */}
-      <div className="bottom-cta">
-        <div className="container">
-          <div className="cta-content">
-            <h2>Still Need Help Choosing?</h2>
-            <p>Our AI assistant is here to guide you through your insurance journey</p>
-            <button className="btn-primary">
-              🤖 Chat with AI Assistant
-            </button>
-          </div>
-        </div>
+      {/* Footer Info */}
+      <div className="plans-footer">
+        <p>📞 Need assistance? Call our support team at +234-800-INSURE-1</p>
+        <p>💡 All prices are indicative. Final premiums may vary based on individual assessment.</p>
       </div>
     </div>
   );
 };
 
-export default InsurancePlansPage;
+export default InsurancePlans;
