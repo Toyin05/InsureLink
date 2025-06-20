@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../styles/Auth.css';
+import '../styles/Login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -11,20 +11,20 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // TODO: Replace with actual API call
+    // Simulate API call delay
     setTimeout(() => {
-      console.log('Login attempt:', formData);
       setIsLoading(false);
       // Navigate to dashboard after successful login
       navigate('/dashboard');
@@ -32,129 +32,103 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-page">
-      {/* Header */}
-      <header className="auth-navbar">
-        <div className="auth-nav-container">
-          <Link to="/" className="auth-logo">
-            <h2>🛡️ InsureLink</h2>
-          </Link>
-          <Link to="/" className="back-home">← Back to Home</Link>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="auth-container">
-        <div className="auth-content">
-          {/* Left Side - Branding */}
-          <div className="auth-branding">
-            <div className="branding-content">
-              <h2>Welcome Back! 👋</h2>
-              <p>Continue your journey to smart insurance decisions with InsureLink.</p>
-              <div className="branding-features">
-                <div className="feature-item">
-                  <span className="feature-icon">🤖</span>
-                  <span>AI-powered recommendations</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-icon">📊</span>
-                  <span>Compare multiple plans</span>
-                </div>
-                <div className="feature-item">
-                  <span className="feature-icon">🔒</span>
-                  <span>Secure and trusted platform</span>
-                </div>
-              </div>
+    <div className="auth-container">
+      <div className="auth-wrapper">
+        <div className="auth-card">
+          <div className="auth-header">
+            <div className="logo-section">
+              <h1>InsureLink</h1>
+              <span className="logo-tagline">🛡️ Your Insurance Companion</span>
             </div>
+            <h2>Welcome Back!</h2>
+            <p>Sign in to continue to your insurance dashboard</p>
           </div>
 
-          {/* Right Side - Login Form */}
-          <div className="auth-form-section">
-            <div className="auth-form-container">
-              <div className="form-header">
-                <h1>Sign In</h1>
-                <p>Access your InsureLink account</p>
-              </div>
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Enter your email"
+                required
+              />
+            </div>
 
-              <form onSubmit={handleSubmit} className="auth-form">
-                <div className="form-group">
-                  <label htmlFor="email">Email Address</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="password">Password</label>
-                  <div className="password-input-container">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Enter your password"
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? '👁️' : '👁️‍🗨️'}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="form-options">
-                  <label className="checkbox-container">
-                    <input type="checkbox" />
-                    <span className="checkmark"></span>
-                    Remember me
-                  </label>
-                  <Link to="/forgot-password" className="forgot-link">
-                    Forgot Password?
-                  </Link>
-                </div>
-
-                <button 
-                  type="submit" 
-                  className="auth-submit-btn"
-                  disabled={isLoading}
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <div className="password-input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter your password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  {isLoading ? (
-                    <>
-                      <span className="loading-spinner"></span>
-                      Signing In...
-                    </>
-                  ) : (
-                    'Sign In 🚀'
-                  )}
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
                 </button>
-              </form>
-
-              <div className="auth-divider">
-                <span>or</span>
-              </div>
-
-              <button className="social-btn google-btn">
-                <span className="social-icon">🔍</span>
-                Continue with Google
-              </button>
-
-              <div className="auth-footer">
-                <p>
-                  Don't have an account? 
-                  <Link to="/register" className="auth-link"> Create one here</Link>
-                </p>
               </div>
             </div>
+
+            <div className="form-options">
+              <label className="remember-me">
+                <input type="checkbox" />
+                <span>Remember me</span>
+              </label>
+              <Link to="/forgot-password" className="forgot-link">
+                Forgot Password?
+              </Link>
+            </div>
+
+            <button 
+              type="submit" 
+              className={`auth-submit-btn ${isLoading ? 'loading' : ''}`}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="spinner"></span>
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
+            </button>
+          </form>
+
+          <div className="auth-divider">
+            <span>or</span>
+          </div>
+
+          <div className="social-auth">
+            <button className="social-btn google-btn">
+              <span>🔍</span>
+              Continue with Google
+            </button>
+          </div>
+
+          <div className="auth-footer">
+            <p>
+              Don't have an account?{' '}
+              <Link to="/register" className="auth-link">
+                Sign up here
+              </Link>
+            </p>
+            <p>
+              <Link to="/" className="back-home">
+                ← Back to Homepage
+              </Link>
+            </p>
           </div>
         </div>
       </div>
