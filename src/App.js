@@ -8,6 +8,9 @@ import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword';
 import Dashboard from './components/Dashboard';
 import Education from './components/Education';
+import AIChatPage from './components/AIChatPage';
+// import InsurancePlans from './components/InsurancePlans';
+// import Profile from './components/Profile';
 
 function App() {
   return (
@@ -24,11 +27,10 @@ function App() {
           
           {/* Protected Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/education" element={<EducationCenter />} /> */}
-          {/*Route path="/chat" element={<AIChatInterface />} /> */}
-          <Route path="/plans" element={<InsurancePlans />} 
+          <Route path="/education" element={<Education />} />
+          <Route path="/chat" element={<AIChatPage />} />
+          {/* <Route path="/plans" element={<InsurancePlans />} /> */}
           {/* <Route path="/profile" element={<Profile />} /> */}
-
 
           {/* Catch all route - redirect to landing */}
           <Route path="*" element={<LandingPage />} />
