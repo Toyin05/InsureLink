@@ -1,15 +1,36 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Import your components
 import LandingPage from './components/LandingPage';
-import './App.css';
+import Login from './components/Login';
+import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+// Dashboard will be added in the next step
+// import Dashboard from './components/Dashboard';
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
+          {/* Landing Page */}
           <Route path="/" element={<LandingPage />} />
-          {/* Add other routes here as we build them */}
+          
+          {/* Authentication Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          
+          {/* Protected Routes - Add these as we build them */}
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          {/* <Route path="/education" element={<EducationCenter />} /> */}
+          {/* <Route path="/chat" element={<AIChatInterface />} /> */}
+          {/* <Route path="/plans" element={<InsurancePlans />} /> */}
+          {/* <Route path="/profile" element={<Profile />} /> */}
+          
+          {/* Catch all route - redirect to landing */}
+          <Route path="*" element={<LandingPage />} />
         </Routes>
       </div>
     </Router>
