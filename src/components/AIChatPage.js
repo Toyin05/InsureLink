@@ -17,7 +17,6 @@ const AIChatPage = () => {
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
   const [isListening, setIsListening] = useState(false);
-  const [showNavMenu, setShowNavMenu] = useState(false);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
   const navigate = useNavigate();
@@ -36,14 +35,6 @@ const AIChatPage = () => {
     "What's the best car insurance for me?",
     "How much should I pay for insurance?",
     "What does life insurance cover?"
-  ];
-
-  const navigationLinks = [
-    { path: '/dashboard', name: 'Dashboard', icon: '🏠' },
-    { path: '/plans', name: 'Insurance Plans', icon: '📋' },
-    { path: '/education', name: 'Education', icon: '📚' },
-    { path: '/profile', name: 'Profile', icon: '👤' },
-    { path: '/', name: 'Home', icon: '🏡' }
   ];
 
   const scrollToBottom = () => {
@@ -141,60 +132,12 @@ const AIChatPage = () => {
     });
   };
 
-  const handleNavigation = (path) => {
-    navigate(path);
-    setShowNavMenu(false);
-  };
-
   return (
     <div className="chat-page">
-      {/* Navigation Menu */}
-      <div className={`nav-menu ${showNavMenu ? 'nav-menu-open' : ''}`}>
-        <div className="nav-menu-header">
-          <h3>Navigation</h3>
-          <button 
-            className="nav-close-btn"
-            onClick={() => setShowNavMenu(false)}
-          >
-            ×
-          </button>
-        </div>
-        <div className="nav-links">
-          {navigationLinks.map((link, index) => (
-            <button
-              key={index}
-              className="nav-link-btn"
-              onClick={() => handleNavigation(link.path)}
-            >
-              <span className="nav-icon">{link.icon}</span>
-              <span className="nav-text">{link.name}</span>
-            </button>
-          ))}
-        </div>
-        <div className="nav-menu-footer">
-          <p>Need help? Continue chatting with AI</p>
-        </div>
-      </div>
-
-      {/* Overlay */}
-      {showNavMenu && (
-        <div 
-          className="nav-overlay"
-          onClick={() => setShowNavMenu(false)}
-        ></div>
-      )}
-
       {/* Header */}
       <div className="chat-header">
         <div className="header-content">
           <div className="header-left">
-            <button 
-              className="nav-toggle-btn"
-              onClick={() => setShowNavMenu(true)}
-              title="Navigation Menu"
-            >
-              ☰
-            </button>
             <div className="ai-avatar">
               <div className="avatar-icon">🤖</div>
               <div className="status-indicator"></div>
@@ -206,20 +149,10 @@ const AIChatPage = () => {
           </div>
           
           <div className="header-controls">
-            <div className="header-nav-links">
-              <Link to="/dashboard" className="header-nav-link">
-                <span className="nav-icon">🏠</span>
-                <span>Dashboard</span>
-              </Link>
-              <Link to="/plans" className="header-nav-link">
-                <span className="nav-icon">📋</span>
-                <span>Plans</span>
-              </Link>
-              <Link to="/education" className="header-nav-link">
-                <span className="nav-icon">📚</span>
-                <span>Education</span>
-              </Link>
-            </div>
+            <Link to="/dashboard" className="dashboard-link">
+              <span className="nav-icon">🏠</span>
+              <span>Dashboard</span>
+            </Link>
             
             <div className="language-selector">
               <select 
