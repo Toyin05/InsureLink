@@ -90,21 +90,21 @@ const Education = () => {
     {
       id: 2,
       title: "Health Insurance in Nigeria Explained",
-      videoId: "eKbw8Zxzd8Q", // Using same video ID - replace with different ones when available
+      videoId: "Q-xQZyZtKbg", // Using same video ID - replace with different ones when available
       duration: "18:45",
       views: "23K views"
     },
     {
       id: 3,
       title: "Choosing the Right Motor Insurance",
-      videoId: "eKbw8Zxzd8Q", // Using same video ID - replace with different ones when available
+      videoId: "wpYTOiILD9c", // Using same video ID - replace with different ones when available
       duration: "15:20",
       views: "8K views"
     },
     {
       id: 4,
       title: "Claims Process Made Simple",
-      videoId: "eKbw8Zxzd8Q", // Using same video ID - replace with different ones when available
+      videoId: "rqR2Kfnztxo", // Using same video ID - replace with different ones when available
       duration: "20:15",
       views: "31K views"
     }
