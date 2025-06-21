@@ -25,7 +25,7 @@ const LandingPage = () => {
         <div className="hero-container">
           <div className="hero-content">
             <h1 className="hero-title">
-              Smart Insurance Made Simple.
+              Smart Insurance Made Simple for Nigerians 🇳🇬
             </h1>
             <p className="hero-subtitle">
               Navigate Nigeria's insurance landscape with confidence. Get personalized recommendations, 
