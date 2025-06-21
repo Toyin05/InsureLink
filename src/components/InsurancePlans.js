@@ -1,14 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/InsurancePlans.css';
+import { getInsuranceProducts, payForInsurance, getToken, isLoggedIn } from '../services/apiService';
 
 const InsurancePlans = () => {
   const navigate = useNavigate();
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock data based on your API format for Plan Recommendation Response
-  const mockPlans = [
+  // Check if user is logged in, redirect if not
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate('/login');
+      return;
+    }
+    
+    // Fetch insurance plans from backend
+    fetchInsurancePlans();
+  }, [navigate]);
+
+  const fetchInsurancePlans = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const token = getToken();
+      const response = await getInsuranceProducts(token);
+      
+      // Transform backend data to match your current component structure
+      // Adjust this based on the actual structure your backend returns
+      const transformedPlans = response.map((plan, index) => ({
+        id: plan.id || index + 1,
+        title: plan.name || plan.title || `Insurance Plan ${index + 1}`,
+        insurer: plan.insurer || plan.company || 'InsureLink Partner',
+        product_type: plan.type || plan.category || 'General',
+        price: plan.price || plan.premium || 'Contact for Quote',
+        coverage: plan.coverage || plan.sum_assured || 'Contact for Details',
+        pros: plan.benefits || plan.pros || ['Comprehensive coverage', 'Competitive rates'],
+        cons: plan.limitations || plan.cons || ['Terms and conditions apply'],
+        rating: plan.rating || 4.0,
+        popular: plan.popular || plan.featured || false,
+        description: plan.description || 'Quality insurance coverage for your needs'
+      }));
+      
+      setPlans(transformedPlans);
+    } catch (error) {
+      console.error('Error fetching insurance plans:', error);
+      setError('Failed to load insurance plans. Please try again.');
+      
+      // Fallback to mock data if backend fails
+      setPlans(getMockPlans());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Keep existing mock data as fallback
+  const getMockPlans = () => [
     {
       id: 1,
       title: "Essential Health Cover",
@@ -33,96 +83,41 @@ const InsurancePlans = () => {
       rating: 4.5,
       popular: false
     },
-    {
-      id: 3,
-      title: "Premium Health Plus",
-      insurer: "AXA Mansard",
-      product_type: "Health",
-      price: "₦85,000/year",
-      coverage: "₦5,000,000",
-      pros: ["International coverage", "Dental and optical included", "No waiting period", "Premium hospitals network"],
-      cons: ["Higher cost", "Strict eligibility criteria"],
-      rating: 4.7,
-      popular: true
-    },
-    {
-      id: 4,
-      title: "Basic Motor Insurance",
-      insurer: "Cornerstone Insurance",
-      product_type: "Auto",
-      price: "₦65,000/year",
-      coverage: "₦3,000,000",
-      pros: ["Affordable rates", "Quick claim processing", "Third-party coverage", "Flexible payment options"],
-      cons: ["Limited coverage scope", "No comprehensive benefits"],
-      rating: 3.8,
-      popular: false
-    },
-    {
-      id: 5,
-      title: "Family Life Assurance",
-      insurer: "Mutual Benefits Assurance",
-      product_type: "Life",
-      price: "₦95,000/year",
-      coverage: "₦10,000,000",
-      pros: ["Family coverage", "Investment component", "Flexible premiums", "Tax benefits"],
-      cons: ["Long commitment period", "Complex terms"],
-      rating: 4.1,
-      popular: false
-    },
-    {
-      id: 6,
-      title: "Home Protection Plan",
-      insurer: "Niger Insurance",
-      product_type: "Home",
-      price: "₦55,000/year",
-      coverage: "₦15,000,000",
-      pros: ["Property damage coverage", "Contents insurance", "Natural disaster protection", "Liability coverage"],
-      cons: ["Geographical restrictions", "High deductibles"],
-      rating: 4.0,
-      popular: false
-    },
-    {
-      id: 7,
-      title: "Travel Shield Insurance",
-      insurer: "Leadway Assurance",
-      product_type: "Travel",
-      price: "₦25,000/year",
-      coverage: "₦1,000,000",
-      pros: ["Global coverage", "Medical emergencies", "Trip cancellation", "Lost luggage protection"],
-      cons: ["Short-term coverage only", "Limited to specific destinations"],
-      rating: 4.3,
-      popular: false
-    },
-    {
-      id: 8,
-      title: "Student Health Care",
-      insurer: "AXA Mansard",
-      product_type: "Health",
-      price: "₦30,000/year",
-      coverage: "₦1,500,000",
-      pros: ["Student-friendly rates", "Campus clinic access", "Mental health support", "Emergency services"],
-      cons: ["Age restrictions", "Limited specialist coverage"],
-      rating: 4.0,
-      popular: false
-    }
+    // ... other mock plans can be added here as fallback data
   ];
 
   const filterTypes = ['all', 'Health', 'Auto', 'Life', 'Home', 'Travel'];
 
-  const filteredPlans = mockPlans.filter(plan => {
+  const filteredPlans = plans.filter(plan => {
     const matchesFilter = selectedFilter === 'all' || plan.product_type === selectedFilter;
     const matchesSearch = plan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          plan.insurer.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
-  const handleGetQuote = (planId) => {
-    // In real implementation, this would navigate to quote page or open modal
-    alert(`Getting quote for plan ID: ${planId}. This will connect to backend API later.`);
+  const handleGetQuote = async (planId) => {
+    try {
+      const token = getToken();
+      const response = await payForInsurance(token);
+      
+      // Handle the payment/quote response
+      // This might return a payment URL or quote details
+      if (response.payment_url) {
+        // Redirect to payment page
+        window.open(response.payment_url, '_blank');
+      } else if (response.quote) {
+        alert(`Quote Generated: ${JSON.stringify(response.quote)}`);
+      } else {
+        alert('Quote request submitted successfully! We will contact you soon.');
+      }
+    } catch (error) {
+      console.error('Error getting quote:', error);
+      alert('Failed to process quote request. Please try again.');
+    }
   };
 
   const handleCompare = (planId) => {
-    // In real implementation, this would add to comparison list
+    // This feature can be implemented later
     alert(`Added plan ${planId} to comparison. Feature coming soon!`);
   };
 
@@ -139,6 +134,34 @@ const InsurancePlans = () => {
       </>
     );
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="insurance-plans">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <h2>Loading Insurance Plans...</h2>
+          <p>Fetching the best insurance options for you</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="insurance-plans">
+        <div className="error-container">
+          <h2>⚠️ Unable to Load Plans</h2>
+          <p>{error}</p>
+          <button onClick={fetchInsurancePlans} className="retry-btn">
+            🔄 Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="insurance-plans">
@@ -163,7 +186,7 @@ const InsurancePlans = () => {
           </div>
           <div className="header-title">
             <h1>🛡️ Insurance Plans</h1>
-            <p>Compare and choose the perfect insurance plan for your needs in Nigeria</p>
+            <p>Compare and choose the perfect insurance plan for your needs. </p>
           </div>
         </div>
       </header>
@@ -280,7 +303,7 @@ const InsurancePlans = () => {
         </div>
       </div>
 
-      {/* Call to Action Section */}
+      {/* Rest of your existing JSX remains the same */}
       <div className="cta-section">
         <div className="container">
           <div className="cta-content">
@@ -302,6 +325,7 @@ const InsurancePlans = () => {
             </div>
           </div>
         </div>
+      )}
       </div>
 
       {/* Quick Stats Section */}
@@ -334,7 +358,7 @@ const InsurancePlans = () => {
           <div className="footer-content">
             <div className="footer-section">
               <h4>📞 Need Assistance?</h4>
-              <p>Call our support team: <strong>+234-800-INSURE-1</strong></p>
+              <p>Call our support team: <strong>+2348012345678 InsureTeam </strong></p>
               <p>Email us: <strong>support@insurelink.ng</strong></p>
             </div>
             <div className="footer-section">
