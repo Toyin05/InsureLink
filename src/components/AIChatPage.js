@@ -303,4 +303,4 @@ const AIChatPage = () => {
   );
 };
 
-export default AIChatPage;
+export default AIChatPage
