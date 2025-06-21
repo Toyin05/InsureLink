@@ -1,40 +1,167 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 
+// Import API functions
+import { 
+  getUserInfo, 
+  getInsuranceProducts, 
+  getPersonalizedOptions,
+  getToken, 
+  removeToken, 
+  isLoggedIn 
+} from '../services/apiService';
+
 const Dashboard = () => {
   const navigate = useNavigate();
+  
+  // State management
+  const [userData, setUserData] = useState(null);
+  const [insuranceProducts, setInsuranceProducts] = useState([]);
+  const [personalizedRecommendations, setPersonalizedRecommendations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Mock user data - replace with real data from API later
-  const userData = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    totalPlans: 2,
-    activePolices: 1,
-    lastActivity: "2 hours ago"
+  // Check if user is logged in when component mounts
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate('/login');
+      return;
+    }
+    
+    // Load dashboard data
+    loadDashboardData();
+  }, [navigate]);
+
+  // Function to load all dashboard data
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const token = getToken();
+
+      // Fetch user info
+      const userInfo = await getUserInfo(token);
+      setUserData(userInfo);
+
+      // Fetch insurance products
+      try {
+        const products = await getInsuranceProducts(token);
+        setInsuranceProducts(Array.isArray(products) ? products : []);
+      } catch (productError) {
+        console.log('Could not fetch insurance products:', productError.message);
+        setInsuranceProducts([]);
+      }
+
+      // Try to get personalized recommendations
+      try {
+        const recommendations = await getPersonalizedOptions(token, 'Show me insurance recommendations based on my profile');
+        setPersonalizedRecommendations(Array.isArray(recommendations) ? recommendations.slice(0, 3) : []);
+      } catch (recError) {
+        console.log('Could not fetch personalized recommendations:', recError.message);
+        setPersonalizedRecommendations([]);
+      }
+
+    } catch (err) {
+      console.error('Error loading dashboard data:', err);
+      setError('Failed to load dashboard data. Please try refreshing the page.');
+      
+      // If token is invalid, redirect to login
+      if (err.message.includes('401') || err.message.includes('token')) {
+        removeToken();
+        navigate('/login');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Mock recent activities
-  const recentActivities = [
-    { id: 1, action: "Started health insurance comparison", time: "2 hours ago", type: "compare" },
-    { id: 2, action: "Completed insurance education module", time: "1 day ago", type: "education" },
-    { id: 3, action: "Chatted with AI assistant about car insurance", time: "3 days ago", type: "chat" },
-    { id: 4, action: "Updated profile information", time: "1 week ago", type: "profile" }
-  ];
+  // Generate quick stats based on real data
+  const getQuickStats = () => {
+    if (!userData) return [];
+    
+    return [
+      { 
+        title: "Active Policies", 
+        value: userData.active_policies || 0, 
+        icon: "📋", 
+        color: "#4CAF50" 
+      },
+      { 
+        title: "Available Plans", 
+        value: insuranceProducts.length, 
+        icon: "💾", 
+        color: "#2196F3" 
+      },
+      { 
+        title: "Budget", 
+        value: userData.budget ? `₦${userData.budget.toLocaleString()}` : "Not set", 
+        icon: "💰", 
+        color: "#FF9800" 
+      },
+      { 
+        title: "Recommendations", 
+        value: personalizedRecommendations.length, 
+        icon: "🤖", 
+        color: "#9C27B0" 
+      }
+    ];
+  };
 
-  // Mock quick stats
-  const quickStats = [
-    { title: "Active Policies", value: userData.activePolices, icon: "📋", color: "#4CAF50" },
-    { title: "Saved Plans", value: userData.totalPlans, icon: "💾", color: "#2196F3" },
-    { title: "Education Progress", value: "75%", icon: "📚", color: "#FF9800" },
-    { title: "AI Conversations", value: "8", icon: "🤖", color: "#9C27B0" }
+  // Mock recent activities (you can enhance this later with real activity tracking)
+  const recentActivities = [
+    { id: 1, action: "Logged into dashboard", time: "Just now", type: "login" },
+    { id: 2, action: "Profile information loaded", time: "Just now", type: "profile" },
+    { id: 3, action: "Insurance products updated", time: "Just now", type: "compare" },
+    { id: 4, action: "AI recommendations generated", time: "Just now", type: "chat" }
   ];
 
   const handleLogout = () => {
-    // Add logout logic here later
+    removeToken();
     navigate('/');
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <div className="loading-container" style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          flexDirection: 'column'
+        }}>
+          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔄</div>
+          <p>Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="dashboard-container">
+        <div className="error-container" style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          flexDirection: 'column',
+          color: 'red'
+        }}>
+          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>❌</div>
+          <p>{error}</p>
+          <button onClick={loadDashboardData} style={{ marginTop: '1rem', padding: '0.5rem 1rem' }}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Main dashboard render
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -44,7 +171,9 @@ const Dashboard = () => {
             <h2>🛡️ InsureLink</h2>
           </div>
           <div className="user-section">
-            <span className="welcome-text">Welcome back, {userData.name}!</span>
+            <span className="welcome-text">
+              Welcome back, {userData?.first_name || userData?.username || 'User'}!
+            </span>
             <button className="logout-btn" onClick={handleLogout}>
               Logout
             </button>
@@ -54,11 +183,26 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="dashboard-main">
+        {/* User Info Section */}
+        {userData && (
+          <section className="user-info-section" style={{ marginBottom: '2rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+            <h3 className="section-title">👤 Your Profile</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div><strong>Name:</strong> {userData.first_name} {userData.last_name}</div>
+              <div><strong>Email:</strong> {userData.email}</div>
+              <div><strong>Age:</strong> {userData.age || 'Not specified'}</div>
+              <div><strong>Budget:</strong> ₦{userData.budget?.toLocaleString() || 'Not set'}</div>
+              <div><strong>Phone:</strong> {userData.phone || 'Not provided'}</div>
+              <div><strong>Gender:</strong> {userData.gender || 'Not specified'}</div>
+            </div>
+          </section>
+        )}
+
         {/* Quick Stats Cards */}
         <section className="stats-section">
           <h3 className="section-title">📊 Quick Overview</h3>
           <div className="stats-grid">
-            {quickStats.map((stat, index) => (
+            {getQuickStats().map((stat, index) => (
               <div key={index} className="stat-card" style={{ borderColor: stat.color }}>
                 <div className="stat-icon" style={{ backgroundColor: stat.color + '20' }}>
                   {stat.icon}
@@ -71,6 +215,56 @@ const Dashboard = () => {
             ))}
           </div>
         </section>
+
+        {/* Personalized Recommendations */}
+        {personalizedRecommendations.length > 0 && (
+          <section className="recommendations-section" style={{ marginBottom: '2rem' }}>
+            <h3 className="section-title">🎯 AI Recommendations for You</h3>
+            <div className="recommendations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+              {personalizedRecommendations.map((rec, index) => (
+                <div key={index} className="recommendation-card" style={{ 
+                  padding: '1rem', 
+                  border: '1px solid #ddd', 
+                  borderRadius: '8px',
+                  backgroundColor: '#fff'
+                }}>
+                  <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🤖</div>
+                  <p>{typeof rec === 'string' ? rec : rec.recommendation || 'Personalized insurance recommendation'}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Available Insurance Products */}
+        {insuranceProducts.length > 0 && (
+          <section className="products-section" style={{ marginBottom: '2rem' }}>
+            <h3 className="section-title">🏥 Available Insurance Plans</h3>
+            <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
+              {insuranceProducts.slice(0, 4).map((product, index) => (
+                <div key={index} className="product-card" style={{ 
+                  padding: '1rem', 
+                  border: '1px solid #ddd', 
+                  borderRadius: '8px',
+                  backgroundColor: '#fff'
+                }}>
+                  <h4>{product.name || `Insurance Plan ${index + 1}`}</h4>
+                  <p>{product.description || 'Comprehensive insurance coverage'}</p>
+                  <div style={{ marginTop: '0.5rem', fontWeight: 'bold' }}>
+                    {product.price ? `₦${product.price.toLocaleString()}` : 'Contact for pricing'}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {insuranceProducts.length > 4 && (
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <Link to="/plans" style={{ color: '#2196F3', textDecoration: 'none' }}>
+                  View all {insuranceProducts.length} plans →
+                </Link>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Navigation Cards */}
         <section className="navigation-section">
@@ -113,6 +307,7 @@ const Dashboard = () => {
                   {activity.type === 'education' && '📚'}
                   {activity.type === 'chat' && '💬'}
                   {activity.type === 'profile' && '👤'}
+                  {activity.type === 'login' && '🔐'}
                 </div>
                 <div className="activity-content">
                   <p className="activity-action">{activity.action}</p>
@@ -127,9 +322,9 @@ const Dashboard = () => {
         <section className="quick-actions-section">
           <h3 className="section-title">⚡ Quick Actions</h3>
           <div className="quick-actions">
-            <button className="quick-action-btn primary">
+            <Link to="/plans" className="quick-action-btn primary">
               Get Insurance Quote
-            </button>
+            </Link>
             <button className="quick-action-btn secondary">
               Download Policy Documents
             </button>
