@@ -135,7 +135,7 @@ const AIChatPage = () => {
   return (
     <div className="chat-page">
       {/* Header */}
-      <div className="chat-header">
+      <div className="ai-chat-header">
         <div className="header-content">
           <div className="header-left">
             <div className="ai-avatar">
