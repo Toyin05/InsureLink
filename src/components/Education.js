@@ -90,21 +90,21 @@ const Education = () => {
     {
       id: 2,
       title: "Health Insurance in Nigeria Explained",
-      videoId: "BdBb7OxxB5do53d7", // Replace with actual Curacel video IDs
+      videoId: "rqR2Kfnztxo", // Replace with actual Curacel video IDs
       duration: "18:45",
       views: "23K views"
     },
     {
       id: 3,
       title: "Choosing the Right Motor Insurance",
-      videoId: "2RZjZL6CZ7sic4iW", // Replace with actual Curacel video IDs
+      videoId: "wpYTOiILD9c", // Replace with actual Curacel video IDs
       duration: "15:20",
       views: "8K views"
     },
     {
       id: 4,
       title: "Claims Process Made Simple",
-      videoId: "48XtudX5rYIEd82o", // Replace with actual Curacel video IDs
+      videoId: "Q-xQZyZtKbg", // Replace with actual Curacel video IDs
       duration: "20:15",
       views: "31K views"
     }
