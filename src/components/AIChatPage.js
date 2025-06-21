@@ -20,7 +20,7 @@ const AIChatPage = () => {
   const chatContainerRef = useRef(null);
 
   const languages = [
-    { code: 'english', name: 'English', flag: '🇬🇧' },
+    { code: 'english', name: 'English', flag: '🇳🇬' },
     { code: 'yoruba', name: 'Yorùbá', flag: '🇳🇬' },
     { code: 'hausa', name: 'Hausa', flag: '🇳🇬' },
     { code: 'igbo', name: 'Igbo', flag: '🇳🇬' },
