@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getUserInfo, editUserProfile, changePassword, getToken, removeToken } from '../services/apiService';
 import '../styles/ProfilePage.css';
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+234 801 234 5678',
-    dateOfBirth: '1990-05-15',
-    gender: 'Male',
-    address: 'Lagos, Nigeria',
-    occupation: 'Software Developer'
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    age: '',
+    gender: '',
+    budget: '',
+    username: ''
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -30,6 +32,47 @@ const ProfilePage = () => {
 
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Fetch user data when component mounts
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setIsLoading(true);
+      const token = getToken();
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const userData = await getUserInfo(token);
+      setUserInfo({
+        first_name: userData.first_name || '',
+        last_name: userData.last_name || '',
+        email: userData.email || '',
+        phone: userData.phone || '',
+        age: userData.age || '',
+        gender: userData.gender || '',
+        budget: userData.budget || '',
+        username: userData.username || ''
+      });
+      setError('');
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setError('Failed to load user data. Please try again.');
+      if (error.message.includes('401')) {
+        removeToken();
+        navigate('/login');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
@@ -55,29 +98,102 @@ const ProfilePage = () => {
     }));
   };
 
-  const handleSavePersonalInfo = () => {
-    // Mock API call - replace with actual API integration
-    console.log('Saving personal info:', userInfo);
-    setIsEditing(false);
-    alert('Personal information updated successfully! ✅');
+  const handleSavePersonalInfo = async () => {
+    try {
+      setIsLoading(true);
+      const token = getToken();
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      // Prepare data for backend (match the backend schema)
+      const updateData = {
+        first_name: userInfo.first_name,
+        last_name: userInfo.last_name,
+        email: userInfo.email,
+        phone: userInfo.phone,
+        budget: parseInt(userInfo.budget) || 0
+      };
+
+      await editUserProfile(token, updateData);
+      setIsEditing(false);
+      setError('');
+      alert('Personal information updated successfully! ✅');
+      
+      // Refresh user data to show updated info
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError('Failed to update profile. Please try again.');
+      if (error.message.includes('401')) {
+        removeToken();
+        navigate('/login');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handlePasswordUpdate = () => {
+  const handlePasswordUpdate = async () => {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       alert('New passwords do not match!');
       return;
     }
-    // Mock API call - replace with actual API integration
-    console.log('Updating password');
-    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    alert('Password updated successfully! ✅');
+
+    if (passwordData.newPassword.length < 6) {
+      alert('New password must be at least 6 characters long!');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const token = getToken();
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      await changePassword(token, passwordData.currentPassword, passwordData.newPassword);
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setError('');
+      alert('Password updated successfully! ✅');
+    } catch (error) {
+      console.error('Error updating password:', error);
+      setError('Failed to update password. Please check your current password.');
+      if (error.message.includes('401')) {
+        removeToken();
+        navigate('/login');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSavePreferences = () => {
-    // Mock API call - replace with actual API integration
-    console.log('Saving preferences:', preferences);
+    // Since there is no backend endpoint for preferences, just save to localStorage
+    localStorage.setItem('userPreferences', JSON.stringify(preferences));
     alert('Preferences saved successfully! ✅');
   };
+
+  const handleLogout = () => {
+    removeToken();
+    navigate('/');
+  };
+
+  // Loading state
+  if (isLoading && !userInfo.first_name) {
+    return (
+      <div className="profile-container">
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -94,22 +210,29 @@ const ProfilePage = () => {
           <Link to="/chat" className="nav-link">🤖 AI Chat</Link>
           <Link to="/plans" className="nav-link">📋 Plans</Link>
           <Link to="/profile" className="nav-link active">👤 Profile</Link>
-          <Link to="/" className="nav-link logout">🚪 Logout</Link>
+          <button onClick={handleLogout} className="nav-link logout">🚪 Logout</button>
         </div>
       </nav>
 
       <div className="profile-content">
+        {error && (
+          <div className="error-message">
+            <p>⚠️ {error}</p>
+            <button onClick={() => setError('')}>✕</button>
+          </div>
+        )}
+
         <div className="profile-header">
           <div className="profile-avatar">
             <div className="avatar-circle">
-              {userInfo.firstName.charAt(0)}{userInfo.lastName.charAt(0)}
+              {userInfo.first_name.charAt(0)}{userInfo.last_name.charAt(0)}
             </div>
             <button className="change-photo-btn">📷 Change Photo</button>
           </div>
           <div className="profile-info">
-            <h1>{userInfo.firstName} {userInfo.lastName}</h1>
+            <h1>{userInfo.first_name} {userInfo.last_name}</h1>
             <p className="user-email">{userInfo.email}</p>
-            <p className="user-role">Insurance Member since 2024</p>
+            <p className="user-role">@{userInfo.username} • Insurance Member since 2024</p>
           </div>
         </div>
 
@@ -143,6 +266,7 @@ const ProfilePage = () => {
                 <button 
                   className="edit-btn"
                   onClick={() => setIsEditing(!isEditing)}
+                  disabled={isLoading}
                 >
                   {isEditing ? '❌ Cancel' : '✏️ Edit'}
                 </button>
@@ -153,8 +277,8 @@ const ProfilePage = () => {
                   <label>First Name</label>
                   <input
                     type="text"
-                    name="firstName"
-                    value={userInfo.firstName}
+                    name="first_name"
+                    value={userInfo.first_name}
                     onChange={handlePersonalInfoChange}
                     disabled={!isEditing}
                   />
@@ -164,10 +288,21 @@ const ProfilePage = () => {
                   <label>Last Name</label>
                   <input
                     type="text"
-                    name="lastName"
-                    value={userInfo.lastName}
+                    name="last_name"
+                    value={userInfo.last_name}
                     onChange={handlePersonalInfoChange}
                     disabled={!isEditing}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={userInfo.username}
+                    disabled={true}
+                    title="Username cannot be changed"
                   />
                 </div>
 
@@ -194,57 +329,48 @@ const ProfilePage = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Date of Birth</label>
+                  <label>Age</label>
                   <input
-                    type="date"
-                    name="dateOfBirth"
-                    value={userInfo.dateOfBirth}
-                    onChange={handlePersonalInfoChange}
-                    disabled={!isEditing}
+                    type="number"
+                    name="age"
+                    value={userInfo.age}
+                    disabled={true}
+                    title="Age cannot be changed"
                   />
                 </div>
 
                 <div className="form-group">
                   <label>Gender</label>
-                  <select
-                    name="gender"
-                    value={userInfo.gender}
-                    onChange={handlePersonalInfoChange}
-                    disabled={!isEditing}
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div className="form-group full-width">
-                  <label>Address</label>
                   <input
                     type="text"
-                    name="address"
-                    value={userInfo.address}
-                    onChange={handlePersonalInfoChange}
-                    disabled={!isEditing}
+                    name="gender"
+                    value={userInfo.gender}
+                    disabled={true}
+                    title="Gender cannot be changed"
                   />
                 </div>
 
-                <div className="form-group full-width">
-                  <label>Occupation</label>
+                <div className="form-group">
+                  <label>Budget (₦)</label>
                   <input
-                    type="text"
-                    name="occupation"
-                    value={userInfo.occupation}
+                    type="number"
+                    name="budget"
+                    value={userInfo.budget}
                     onChange={handlePersonalInfoChange}
                     disabled={!isEditing}
+                    placeholder="Enter your insurance budget"
                   />
                 </div>
               </div>
 
               {isEditing && (
                 <div className="form-actions">
-                  <button className="save-btn" onClick={handleSavePersonalInfo}>
-                    💾 Save Changes
+                  <button 
+                    className="save-btn" 
+                    onClick={handleSavePersonalInfo}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? '⏳ Saving...' : '💾 Save Changes'}
                   </button>
                 </div>
               )}
@@ -259,7 +385,7 @@ const ProfilePage = () => {
               <div className="security-info">
                 <div className="security-item">
                   <h3>🔐 Password</h3>
-                  <p>Last changed 30 days ago</p>
+                  <p>Keep your account secure with a strong password</p>
                 </div>
               </div>
 
@@ -283,7 +409,7 @@ const ProfilePage = () => {
                     name="newPassword"
                     value={passwordData.newPassword}
                     onChange={handlePasswordChange}
-                    placeholder="Enter new password"
+                    placeholder="Enter new password (min 6 characters)"
                   />
                 </div>
 
@@ -298,8 +424,12 @@ const ProfilePage = () => {
                   />
                 </div>
 
-                <button className="save-btn" onClick={handlePasswordUpdate}>
-                  🔄 Update Password
+                <button 
+                  className="save-btn" 
+                  onClick={handlePasswordUpdate}
+                  disabled={isLoading}
+                >
+                  {isLoading ? '⏳ Updating...' : '🔄 Update Password'}
                 </button>
               </div>
 
@@ -307,11 +437,11 @@ const ProfilePage = () => {
                 <h3>Additional Security</h3>
                 <div className="security-option">
                   <span>📱 Two-Factor Authentication</span>
-                  <button className="enable-btn">Enable</button>
+                  <button className="enable-btn">Coming Soon</button>
                 </div>
                 <div className="security-option">
                   <span>📧 Login Notifications</span>
-                  <button className="enabled-btn">Enabled</button>
+                  <button className="enabled-btn">Coming Soon</button>
                 </div>
               </div>
             </div>
