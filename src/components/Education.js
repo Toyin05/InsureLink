@@ -13,7 +13,7 @@ const Education = () => {
         {
           id: 1,
           title: "What is Insurance and Why Do You Need It?",
-          excerpt: "Learn the fundamentals of insurance and how it protects r financial future in Nigeria.",
+          excerpt: "Learn the fundamentals of insurance and how it protects our financial future in Nigeria.",
           readTime: "5 min read",
           content: "Insurance is a financial safety net that protects you from unexpected costs. In Nigeria, having insurance is crucial due to economic uncertainties and healthcare costs..."
         },
@@ -188,7 +188,7 @@ const Education = () => {
                   <div key={video.id} className="video-card">
                     <div className="video-thumbnail">
                       <iframe
-                        src={`https://youtu.be/eKbw8Zxzd8Q?si=BdBb7OxxB5do53d7`}
+                        src="https://youtu.be/eKbw8Zxzd8Q?si=BdBb7OxxB5do53d7"
                         title={video.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
