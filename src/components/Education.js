@@ -188,7 +188,7 @@ const Education = () => {
                   <div key={video.id} className="video-card">
                     <div className="video-thumbnail">
                       <iframe
-                        src= src=`https://www.youtube.com/embed/{video.videoId}`
+                        src= src=`https://www.youtube.com/embed/${video.videoId}`
                         title={video.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
