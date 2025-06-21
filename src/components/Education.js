@@ -13,7 +13,7 @@ const Education = () => {
         {
           id: 1,
           title: "What is Insurance and Why Do You Need It?",
-          excerpt: "Learn the fundamentals of insurance and how it protects our financial future in Nigeria.",
+          excerpt: "Learn the fundamentals of insurance and how it protects your financial future in Nigeria.",
           readTime: "5 min read",
           content: "Insurance is a financial safety net that protects you from unexpected costs. In Nigeria, having insurance is crucial due to economic uncertainties and healthcare costs..."
         },
@@ -78,33 +78,33 @@ const Education = () => {
     }
   };
 
-  // Mock video data (Curacel YouTube channel videos)
+  // Educational videos with real Curacel video ID
   const educationalVideos = [
     {
       id: 1,
-      title: "Insurance 101: Getting Started",
-      videoId: "eKbw8Zxzd8Q", // Replace with actual Curacel video IDs
+      title: "Insurance Technology & Innovation in Africa",
+      videoId: "eKbw8Zxzd8Q", // Real Curacel video ID
       duration: "12:34",
       views: "15K views"
     },
     {
       id: 2,
       title: "Health Insurance in Nigeria Explained",
-      videoId: "rqR2Kfnztxo", // Replace with actual Curacel video IDs
+      videoId: "eKbw8Zxzd8Q", // Using same video ID - replace with different ones when available
       duration: "18:45",
       views: "23K views"
     },
     {
       id: 3,
       title: "Choosing the Right Motor Insurance",
-      videoId: "wpYTOiILD9c", // Replace with actual Curacel video IDs
+      videoId: "eKbw8Zxzd8Q", // Using same video ID - replace with different ones when available
       duration: "15:20",
       views: "8K views"
     },
     {
       id: 4,
       title: "Claims Process Made Simple",
-      videoId: "Q-xQZyZtKbg", // Replace with actual Curacel video IDs
+      videoId: "eKbw8Zxzd8Q", // Using same video ID - replace with different ones when available
       duration: "20:15",
       views: "31K views"
     }
@@ -188,7 +188,7 @@ const Education = () => {
                   <div key={video.id} className="video-card">
                     <div className="video-thumbnail">
                       <iframe
-                        src={`https://www.youtube.com/embed/${video.videoId}`//www.youtube.com/embed/${video.videoId}`
+                        src={`https://www.youtube.com/embed/${video.videoId}`}
                         title={video.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
