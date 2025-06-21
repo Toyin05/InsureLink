@@ -309,11 +309,11 @@ body {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 15px;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .step-content p {
-  color: #B0C4FF;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
