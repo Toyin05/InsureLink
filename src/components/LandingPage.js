@@ -14,6 +14,7 @@ const LandingPage = () => {
           <nav className="nav-links">
             <Link to="/education" className="nav-link">Education</Link>
             <Link to="/plans" className="nav-link">Insurance Plans</Link>
+            <Link to="/chat" className="nav-link">AI Chatbot</Link>
             <Link to="/login" className="nav-link">Login</Link>
             <Link to="/register" className="btn-primary">Get Started</Link>
           </nav>
