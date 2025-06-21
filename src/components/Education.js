@@ -83,28 +83,28 @@ const Education = () => {
     {
       id: 1,
       title: "Insurance 101: Getting Started",
-      videoId: "dQw4w9WgXcQ", // Replace with actual Curacel video IDs
+      videoId: "eKbw8Zxzd8Q", // Replace with actual Curacel video IDs
       duration: "12:34",
       views: "15K views"
     },
     {
       id: 2,
       title: "Health Insurance in Nigeria Explained",
-      videoId: "dQw4w9WgXcQ", // Replace with actual Curacel video IDs
+      videoId: "BdBb7OxxB5do53d7", // Replace with actual Curacel video IDs
       duration: "18:45",
       views: "23K views"
     },
     {
       id: 3,
       title: "Choosing the Right Motor Insurance",
-      videoId: "dQw4w9WgXcQ", // Replace with actual Curacel video IDs
+      videoId: "2RZjZL6CZ7sic4iW", // Replace with actual Curacel video IDs
       duration: "15:20",
       views: "8K views"
     },
     {
       id: 4,
       title: "Claims Process Made Simple",
-      videoId: "dQw4w9WgXcQ", // Replace with actual Curacel video IDs
+      videoId: "48XtudX5rYIEd82o", // Replace with actual Curacel video IDs
       duration: "20:15",
       views: "31K views"
     }
@@ -188,7 +188,7 @@ const Education = () => {
                   <div key={video.id} className="video-card">
                     <div className="video-thumbnail">
                       <iframe
-                        src="https://youtu.be/eKbw8Zxzd8Q?si=BdBb7OxxB5do53d7"
+                        src= src=`https://www.youtube.com/embed/{video.videoId}`
                         title={video.title}
                         frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
