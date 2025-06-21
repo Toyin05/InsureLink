@@ -9,7 +9,7 @@
 }
 
 /* Header Styles */
-.ai-chat-header {
+.chat-header {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -545,34 +545,6 @@
   justify-content: center;
 }
 
-.dashboard-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  color: white;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  margin-right: 1rem;
-}
-
-.dashboard-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
-  text-decoration: none;
-  color: white;
-}
-
-.dashboard-link .nav-icon {
-  font-size: 1rem;
-}
-
 .send-button.active {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
@@ -595,7 +567,7 @@
     padding: 0;
   }
   
-  .ai-chat-header {
+  .chat-header {
     padding: 0.75rem 1rem;
   }
   
@@ -631,7 +603,7 @@
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .ai-chat-header {
+  .chat-header {
     background: rgba(44, 62, 80, 0.95);
   }
   
