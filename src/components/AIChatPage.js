@@ -49,7 +49,7 @@ const AIChatPage = () => {
     "What insurance do I need based on my age and budget?"
   ];
 
-  // Check authentication on component mount
+  // Check authentication on the component mount
   useEffect(() => {
     if (!isLoggedIn()) {
       navigate('/login');
@@ -102,7 +102,7 @@ const AIChatPage = () => {
         currentMessage.toLowerCase().includes(keyword)
       );
 
-      // Try to get personalized recommendations if the request seems like it's asking for them
+      // Try to get personalized recommendations if the request looks like it's asking for them
       if (isRecommendationRequest) {
         try {
           const personalizedResponse = await getPersonalizedOptions(token, currentMessage, selectedLanguage);
@@ -147,7 +147,7 @@ const AIChatPage = () => {
           }
         } catch (recError) {
           console.log('Could not fetch personalized recommendations:', recError);
-          // Don't show error to user, just log it
+          // Don't show error to the user...just log it
         }
       }
 
