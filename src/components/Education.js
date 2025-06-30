@@ -78,7 +78,7 @@ const Education = () => {
     }
   };
 
-  // Educational videos with real Curacel video ID
+  // Educational videos with the Curacel video ID
   const educationalVideos = [
     {
       id: 1,
