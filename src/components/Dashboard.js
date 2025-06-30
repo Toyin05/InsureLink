@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Check if user is logged in when component mounts
+  // Check if user is logged in when the component mounts
   useEffect(() => {
     if (!isLoggedIn()) {
       navigate('/login');
@@ -108,7 +108,7 @@ const Dashboard = () => {
     ];
   };
 
-  // Mock recent activities (you can enhance this later with real activity tracking)
+  // Mock recent activities (can be enhanced later on...)
   const recentActivities = [
     { id: 1, action: "Logged into dashboard", time: "Just now", type: "login" },
     { id: 2, action: "Profile information loaded", time: "Just now", type: "profile" },
